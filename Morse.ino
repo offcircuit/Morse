@@ -1,16 +1,16 @@
 #include "Morse.h"
 
-Morse m;
+Morse morse;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
-  m.pointer = mm;
-  m.send("abcd 123");
+  //Serial.begin(9600);
+  morse.pointer = callback;
+  morse.send("abcd 123");
 }
 
-void mm(int8_t *e) {
-  if (*e == MORSE_CHAR) Serial.print(" CHAR ");
+void callback(int8_t *e) {
+  /*if (*e == MORSE_CHAR) Serial.print(" CHAR ");
   if (*e == MORSE_LETTER) Serial.println(" LETTER ");
   else if (*e == MORSE_WORD) Serial.println(" WORD ");
   else if (*e == MORSE_PHRASE) Serial.println(" PHRASE ");
@@ -21,7 +21,7 @@ void mm(int8_t *e) {
     else {
       Serial.print(" ");
     }
-  }
+  }*/
 }
 
 void loop() {
