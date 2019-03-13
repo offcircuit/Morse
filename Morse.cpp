@@ -71,7 +71,7 @@ void Morse::pulse(int8_t e) {
   if (event) event(&e);
 }
 
-void Morse::send(String data) {
+void Morse::transmit(String data) {
   data.toUpperCase();
   for (size_t i = 0; i < data.length(); i++) {
     uint8_t code = encode(data[i]);

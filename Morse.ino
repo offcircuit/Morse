@@ -6,7 +6,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   morse.event = callback;
-  morse.send("abcd 123");
+  morse.transmit("abcd 123");
 }
 
 void callback(int8_t *e) {
