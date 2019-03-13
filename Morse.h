@@ -7,31 +7,24 @@
 #include "WProgram.h"
 #endif
 
-#define MORSE_DIT
-#define MORSE_DAH
-#define MORSE_WORD
-#define MORSE_SHORT
-#define MORSE_
-#define MORSE_LONG
+#define MORSE_DI 0
+#define MORSE_DAH 1
+#define MORSE_DIT 2
+#define MORSE_CHAR 3
+#define MORSE_LETTER 4
+#define MORSE_WORD 5
+#define MORSE_PHRASE 6
 
 class Morse {
   public:
-    typedef void (*morsePointer) (bool*);
-
-    morsePointer pulse;
+    typedef void (*morsePointer) (uint8_t *);
+    morsePointer pointer;
 
     explicit Morse() {};
+    
     uint8_t encode(char c);
-
-    void send(String data) {
-      data.toUpperCase();
-      for (size_t i = 0; i < data.length(); i++) {
-        uint8_t code = encode(data[i]);
-        do if (pulse) pulse(code % 2);
-        while ((code = code >> 1) > 1);
-        pulse(0);
-      }
-    }
+    void pulse(int8_t e);
+    void send(String data);
 };
 
 #endif

@@ -1,8 +1,8 @@
 #include "Morse.h"
 
-uint8_t Morse::encode(char c) {
-  switch (c) {
-    case 32: return 0b1;
+uint8_t Morse::encode(char character) {
+  switch (character) {
+    case 32: return 0b0;
 
     case 48: return 0b111111;
     case 49: return 0b111110;
@@ -42,4 +42,25 @@ uint8_t Morse::encode(char c) {
     case 89: return 0b11101;
     case 90: return 0b10011;
   }
+}
+
+void Morse::pulse(int8_t e) {
+  if (pointer) pointer(&e);
+}
+
+void Morse::send(String data) {
+  data.toUpperCase();
+  for (size_t i = 0; i < data.length(); i++) {
+    uint8_t code = encode(data[i]);
+
+    if (code) {
+      do {
+        pulse((code % 2) + ((1 - (code % 2)) * (((code >> 1) > 1) * 2)));
+        if ((code >> 1) > 1) pulse(MORSE_CHAR);
+      } while ((code = code >> 1) > 1);
+
+      pulse(MORSE_LETTER);
+    } else if (i < data.length()) pulse(MORSE_WORD);
+  }
+  pulse(MORSE_PHRASE);
 }
