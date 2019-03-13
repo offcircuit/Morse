@@ -97,10 +97,10 @@ String Morse::receipt(String data) {
         letter = "1" + letter;
         break;
 
-      case MORSE_CHAR:
+      case MORSE_GAP:
         break;
 
-      case MORSE_LETTER:
+      case MORSE_CHAR:
         string += String(decode("1" + letter));
         letter = "";
         break;
@@ -124,10 +124,10 @@ void Morse::transmit(String data) {
     if (code) {
       do {
         pulse((code % 2) + ((1 - (code % 2)) * (!((code >> 1) > 1) * 2)));
-        if ((code >> 1) > 1) pulse(MORSE_CHAR);
+        if ((code >> 1) > 1) pulse(MORSE_GAP);
       } while ((code = code >> 1) > 1);
 
-      pulse(MORSE_LETTER);
+      pulse(MORSE_CHAR);
     } else if (i < data.length()) pulse(MORSE_WORD);
   }
   pulse(MORSE_PHRASE);
