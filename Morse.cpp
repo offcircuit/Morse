@@ -9,14 +9,16 @@ char Morse::decode(String character) {
   }
 
   if (encode(13) == binary) return char(13);
-  for (size_t i = 32; i <= 90; i++) if (encode(char(i)) == binary) return char(i);
+  for (size_t i = 32; i <= 95; i++) if (encode(char(i)) == binary) return char(i);
+
+  return MORSE_INVALID_CHAR;
 }
 
-uint8_t Morse::encode(char character) {
+uint16_t Morse::encode(char character) {
   switch (character) {
     case 13: return 0b1101100;    // EOL
 
-    case 32: return 0b0;          // SPACE
+    case 32: return 0b1;          // SPACE
 
     case 33: return 0b1110101;    // !
     case 34: return 0b1010010;    // "
@@ -26,6 +28,9 @@ uint8_t Morse::encode(char character) {
     case 39: return 0b1011110;    // '
     case 40: return 0b101101;     // (
     case 41: return 0b1101101;    // )
+
+    case 43: return 0b101010;     // +
+
     case 44: return 0b1110011;    // ,
     case 45: return 0b1100001;    // -
     case 46: return 0b1101010;    // .
@@ -76,6 +81,10 @@ uint8_t Morse::encode(char character) {
     case 88: return 0b11001;      // X
     case 89: return 0b11101;      // Y
     case 90: return 0b10011;      // Z
+
+    case 95: return 0b1101100;    // _
+
+    default: return 0b100000000;   // INVALID
   }
 }
 
@@ -119,9 +128,9 @@ String Morse::receipt(String data) {
 void Morse::transmit(String data) {
   data.toUpperCase();
   for (size_t i = 0; i < data.length(); i++) {
-    uint8_t code = encode(data[i]);
+    uint16_t code = encode(data[i]);
 
-    if (code) {
+    if (code != 1) {
       do {
         pulse((code % 2) + ((1 - (code % 2)) * (!((code >> 1) > 1) * 2)));
         if ((code >> 1) > 1) pulse(MORSE_GAP);
