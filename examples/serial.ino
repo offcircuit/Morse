@@ -2,14 +2,20 @@
 
 Morse morse;
 
+String s;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   morse.event = callback;
-  morse.transmit("abcd 123");
+  morse.transmit("sending morse code...");
+  Serial.println(s);
+  Serial.println(morse.receipt(s));
 }
 
 void callback(int8_t *e) {
+  s += String(*e);
+
   if (*e == MORSE_CHAR) Serial.print(" CHAR ");
   if (*e == MORSE_LETTER) Serial.println(" LETTER ");
   else if (*e == MORSE_WORD) Serial.println(" WORD ");
