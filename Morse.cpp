@@ -68,7 +68,7 @@ uint8_t Morse::encode(char character) {
 }
 
 void Morse::pulse(int8_t e) {
-  if (_event) _event(&e);
+  if (event) event(&e);
 }
 
 void Morse::send(String data) {

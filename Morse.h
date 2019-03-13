@@ -19,10 +19,10 @@ class Morse {
   public:
     typedef void (*morsePointer) (uint8_t *);
 
-    morsePointer _event;
+    morsePointer event;
 
     explicit Morse() {};
-    explicit Morse(event): _event(event) {};
+    explicit Morse(morsePointer pointer): event(pointer) {};
     
     uint8_t encode(char c);
     void pulse(int8_t e);
