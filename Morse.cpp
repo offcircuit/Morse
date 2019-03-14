@@ -1,9 +1,5 @@
 #include "Morse.h"
 
-void Morse::clear() {
-  _buffer = 1;
-}
-
 uint8_t Morse::clear(uint8_t tag) {
   _buffer = 1;
   return tag;
@@ -22,7 +18,7 @@ uint8_t Morse::decode() {
   return clear(MORSE_INVALID_CHAR);
 }
 
-uint16_t Morse::encode(uint16_t character) {
+uint16_t Morse::encode(uint8_t character) {
   switch (character) {
     case 13: return 0b1101100;    // EOL
 
@@ -91,26 +87,25 @@ uint16_t Morse::encode(uint16_t character) {
 
     case 95: return 0b1101100;    // _
 
-    default: return 0b100000000;  // INVALID
+    default: return 0b100000000;  // INVALID OR ERROR
   }
 }
 
 void Morse::pulse(int8_t signal) {
-  if (transmit) transmit(&signal);
-}
-
-char Morse::receive(uint8_t signal) {
-  return char(tag(signal));
+  if (_transmiter) _transmiter(signal);
 }
 
 String Morse::read(String data) {
   String string = "";
+  uint8_t signal;
   _buffer = 1;
-  for (size_t i = 0; i < data.length(); i++) string += receive(String(data[i]).toInt());
+  for (size_t i = 0; i < data.length(); i++) if (signal = tag(String(data[i]).toInt())) string += char(signal);
+  _buffer = 1;
   return string;
 }
 
 uint8_t Morse::tag(uint8_t signal) {
+
   if (_buffer > 0xFF) return decode();
   else switch (signal) {
       case MORSE_DI: case MORSE_DIT:
@@ -120,11 +115,12 @@ uint8_t Morse::tag(uint8_t signal) {
       case MORSE_DAH:
         bitSet(_buffer, count(_buffer));
         break;
-      case MORSE_GAP: break;;
+      case MORSE_GAP: break;
       case MORSE_CHAR: return decode();
       case MORSE_WORD: _buffer = 1; return 32;
       case MORSE_PHRASE: return decode();
     }
+
   return 0;
 }
 
@@ -135,7 +131,7 @@ void Morse::write(String data) {
 
     if (code != 1) {
       do {
-        pulse((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2));
+        pulse(((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2)));
         if ((code >> 1) > 1) pulse(MORSE_GAP);
       } while ((code = code >> 1) > 1);
 
