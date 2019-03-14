@@ -111,21 +111,20 @@ String Morse::read(String data) {
 }
 
 uint8_t Morse::tag(uint8_t signal) {
-  switch (signal) {
-    case MORSE_DI: case MORSE_DIT:
-      bitSet(_buffer, count(_buffer));
-      bitClear(_buffer, count(_buffer) - 2);
-      break;
-    case MORSE_DAH:
-      bitSet(_buffer, count(_buffer));
-      break;
-    case MORSE_GAP: break;;
-    case MORSE_CHAR: return decode();
-    case MORSE_WORD: _buffer = 1; return 32;
-    case MORSE_PHRASE: return decode();
-  }
-  
   if (_buffer > 0xFF) return decode();
+  else switch (signal) {
+      case MORSE_DI: case MORSE_DIT:
+        bitSet(_buffer, count(_buffer));
+        bitClear(_buffer, count(_buffer) - 2);
+        break;
+      case MORSE_DAH:
+        bitSet(_buffer, count(_buffer));
+        break;
+      case MORSE_GAP: break;;
+      case MORSE_CHAR: return decode();
+      case MORSE_WORD: _buffer = 1; return 32;
+      case MORSE_PHRASE: return decode();
+    }
   return 0;
 }
 
