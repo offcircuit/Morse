@@ -23,27 +23,24 @@ class Morse {
 
     uint16_t _buffer = 1;
 
+    uint8_t clear(uint8_t tag);
+    uint8_t count(uint8_t value);
     uint8_t decode();
     uint16_t encode(uint16_t character);
-    void pulse(int8_t sign);
 
-    uint8_t count(uint8_t value) {
-      int count = 0;
-      do count++;
-      while ((value = value >> 1) > 0);
-      return count;
-    }
+    void pulse(int8_t signal);
+    uint8_t tag(uint8_t signal);
 
   public:
-    morsePointer event;
+    morsePointer transmit;
 
     explicit Morse() {};
-    explicit Morse(morsePointer pointer): event(pointer) {};
+    explicit Morse(morsePointer pointer): transmit(pointer) {};
 
-    String receipt(String data);
-    uint8_t signal(uint8_t sign);
-    void transmit(String data);
-
+    void clear();
+    String read(String data);
+    char receive(uint8_t signal);
+    void write(String data);
 };
 
 #endif

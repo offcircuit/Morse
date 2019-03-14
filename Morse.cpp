@@ -1,18 +1,26 @@
 #include "Morse.h"
 
-uint8_t Morse::decode() {
-  if (encode(13) == _buffer) {
-    _buffer = 1;
-    return 13;
-  }
-  
-  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) {
-      _buffer = 1;
-      return i;
-    }
-
+void Morse::clear() {
   _buffer = 1;
-  return MORSE_INVALID_CHAR;
+}
+
+uint8_t Morse::clear(uint8_t tag) {
+  _buffer = 1;
+  return tag;
+}
+
+uint8_t Morse::count(uint8_t value) {
+  int count = 0;
+  do count++;
+  while ((value = value >> 1));
+  return count;
+}
+
+uint8_t Morse::decode() {
+  if (encode(13) == _buffer) return clear(13);
+  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return clear(i);
+
+  return clear(MORSE_INVALID_CHAR);
 }
 
 uint16_t Morse::encode(uint16_t character) {
@@ -88,13 +96,24 @@ uint16_t Morse::encode(uint16_t character) {
   }
 }
 
-void Morse::pulse(int8_t sign) {
-  if (event) event(&sign);
+void Morse::pulse(int8_t signal) {
+  if (transmit) transmit(&signal);
 }
 
-uint8_t Morse::signal(uint8_t sign) {
+char Morse::receive(uint8_t signal) {
+  return char(tag(signal));
+}
+
+String Morse::read(String data) {
+  String string = "";
+  _buffer = 1;
+  for (size_t i = 0; i < data.length(); i++) string += receive(String(data[i]).toInt());
+  return string;
+}
+
+uint8_t Morse::tag(uint8_t signal) {
   if (_buffer > 0xFF) return decode();
-  else switch (sign) {
+  else switch (signal) {
       case MORSE_DI: case MORSE_DIT:
         bitSet(_buffer, count(_buffer));
         bitClear(_buffer, count(_buffer) - 2);
@@ -110,14 +129,7 @@ uint8_t Morse::signal(uint8_t sign) {
   return 0;
 }
 
-String Morse::receipt(String data) {
-  String string = "";
-  _buffer = 1;
-  for (size_t i = 0; i < data.length(); i++) string += String(char(signal(String(data[i]).toInt())));
-  return string;
-}
-
-void Morse::transmit(String data) {
+void Morse::write(String data) {
   data.toUpperCase();
   for (size_t i = 0; i < data.length(); i++) {
     uint16_t code = encode(data[i]);
