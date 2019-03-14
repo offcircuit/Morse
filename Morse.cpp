@@ -30,7 +30,6 @@ uint16_t Morse::encode(char character) {
     case 41: return 0b1101101;    // )
 
     case 43: return 0b101010;     // +
-
     case 44: return 0b1110011;    // ,
     case 45: return 0b1100001;    // -
     case 46: return 0b1101010;    // .
