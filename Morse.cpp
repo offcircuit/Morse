@@ -1,13 +1,17 @@
 #include "Morse.h"
 
-char Morse::decode(String character) {
+char Morse::decode() {
   uint8_t binary = 0, exponent = 1;
 
-  for (size_t i = character.length(); i > 0; i--) {
-    binary += exponent * (character[i - 1] - 48);
+  _buffer = "1" + _buffer;
+
+  for (size_t i = _buffer.length(); i > 0; i--) {
+    binary += exponent * (_buffer[i - 1] - 48);
     exponent *= 2 ;
   }
-
+  
+  _buffer = "";
+  
   if (encode(13) == binary) return 13;
   for (size_t i = 32; i <= 95; i++) if (encode(i) == binary) return i;
 
@@ -91,36 +95,25 @@ void Morse::pulse(int8_t sign) {
   if (event) event(&sign);
 }
 
-String Morse::receipt(String data) {
-  String character = "", string = "";
-  for (size_t i = 0; i < data.length(); i++) {
-    switch (String(data[i]).toInt()) {
+String Morse::signal(uint8_t sign) {
+  String string = "";
 
-      case MORSE_DI:
-      case MORSE_DIT:
-        character = "0" + character;
-        break;
-
-      case MORSE_DAH:
-        character = "1" + character;
-        break;
-
-      case MORSE_GAP:
-        break;
-
-      case MORSE_CHAR:
-        string += String(decode("1" + character));
-        character = "";
-        break;
-
-      case MORSE_WORD:
-        string += " ";
-        character = "";
-        break;
-
-      case MORSE_PHRASE: return string;
+  if (_buffer.length() > 8) _buffer = "";
+  else switch (sign) {
+      case MORSE_DI: case MORSE_DIT: _buffer = "0" + _buffer; return  "";
+      case MORSE_DAH: _buffer = "1" + _buffer; return  "";
+      case MORSE_GAP: return  "";
+      case MORSE_CHAR: return String(decode());
+      case MORSE_WORD: return " ";
+      case MORSE_PHRASE: string = _buffer; _buffer = "";
     }
-  }
+  return string;
+}
+
+String Morse::receipt(String data) {
+  String string = "";
+  _buffer = "";
+  for (size_t i = 0; i < data.length(); i++) string += signal(String(data[i]).toInt());
   return string;
 }
 
@@ -131,7 +124,7 @@ void Morse::transmit(String data) {
 
     if (code != 1) {
       do {
-        pulse((code % 2) + ((1 - (code % 2)) * (!((code >> 1) > 1) * 2)));
+        pulse((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2));
         if ((code >> 1) > 1) pulse(MORSE_GAP);
       } while ((code = code >> 1) > 1);
 

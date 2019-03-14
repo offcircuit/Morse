@@ -21,7 +21,9 @@ class Morse {
   private:
     typedef void (*morsePointer) (uint8_t *);
 
-    char decode(String character);
+    String _buffer = "";
+
+    char decode();
     uint16_t encode(char character);
     void pulse(int8_t sign);
 
@@ -32,6 +34,7 @@ class Morse {
     explicit Morse(morsePointer pointer): event(pointer) {};
 
     String receipt(String data);
+    String signal(uint8_t sign);
     void transmit(String data);
 };
 
