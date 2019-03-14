@@ -1,24 +1,21 @@
 #include "Morse.h"
 
-char Morse::decode() {
-  uint8_t binary = 0, exponent = 1;
-
-  _buffer = "1" + _buffer;
-
-  for (size_t i = _buffer.length(); i > 0; i--) {
-    binary += exponent * (_buffer[i - 1] - 48);
-    exponent *= 2 ;
+uint8_t Morse::decode() {
+  if (encode(13) == _buffer) {
+    _buffer = 1;
+    return 13;
   }
   
-  _buffer = "";
-  
-  if (encode(13) == binary) return 13;
-  for (size_t i = 32; i <= 95; i++) if (encode(i) == binary) return i;
+  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) {
+      _buffer = 1;
+      return i;
+    }
 
+  _buffer = 1;
   return MORSE_INVALID_CHAR;
 }
 
-uint16_t Morse::encode(char character) {
+uint16_t Morse::encode(uint16_t character) {
   switch (character) {
     case 13: return 0b1101100;    // EOL
 
@@ -95,25 +92,28 @@ void Morse::pulse(int8_t sign) {
   if (event) event(&sign);
 }
 
-String Morse::signal(uint8_t sign) {
-  String string = "";
-
-  if (_buffer.length() > 8) _buffer = "";
+uint8_t Morse::signal(uint8_t sign) {
+  if (_buffer > 0xFF) return decode();
   else switch (sign) {
-      case MORSE_DI: case MORSE_DIT: _buffer = "0" + _buffer; return  "";
-      case MORSE_DAH: _buffer = "1" + _buffer; return  "";
-      case MORSE_GAP: return  "";
-      case MORSE_CHAR: return String(decode());
-      case MORSE_WORD: return " ";
-      case MORSE_PHRASE: string = _buffer; _buffer = "";
+      case MORSE_DI: case MORSE_DIT:
+        bitSet(_buffer, count(_buffer));
+        bitClear(_buffer, count(_buffer) - 2);
+        break;
+      case MORSE_DAH:
+        bitSet(_buffer, count(_buffer));
+        break;
+      case MORSE_GAP: break;;
+      case MORSE_CHAR: return decode();
+      case MORSE_WORD: _buffer = 1; return 32;
+      case MORSE_PHRASE: return decode();
     }
-  return string;
+  return 0;
 }
 
 String Morse::receipt(String data) {
   String string = "";
-  _buffer = "";
-  for (size_t i = 0; i < data.length(); i++) string += signal(String(data[i]).toInt());
+  _buffer = 1;
+  for (size_t i = 0; i < data.length(); i++) string += String(char(signal(String(data[i]).toInt())));
   return string;
 }
 
@@ -128,7 +128,7 @@ void Morse::transmit(String data) {
         if ((code >> 1) > 1) pulse(MORSE_GAP);
       } while ((code = code >> 1) > 1);
 
-      pulse(MORSE_CHAR);
+      if (i < data.length() - 1) pulse(MORSE_CHAR);
     } else if (i < data.length()) pulse(MORSE_WORD);
   }
   pulse(MORSE_PHRASE);
