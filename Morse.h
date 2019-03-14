@@ -22,8 +22,8 @@ class Morse {
     typedef void (*morsePointer) (uint8_t *);
 
     char decode(String character);
-    uint16_t encode(char c);
-    void pulse(int8_t e);
+    uint16_t encode(char character);
+    void pulse(int8_t sign);
 
   public:
     morsePointer event;

@@ -4,12 +4,12 @@ char Morse::decode(String character) {
   uint8_t binary = 0, exponent = 1;
 
   for (size_t i = character.length(); i > 0; i--) {
-    binary += exponent * (character[i - 1] == 49);
+    binary += exponent * (character[i - 1] - 48);
     exponent *= 2 ;
   }
 
-  if (encode(13) == binary) return char(13);
-  for (size_t i = 32; i <= 95; i++) if (encode(char(i)) == binary) return char(i);
+  if (encode(13) == binary) return 13;
+  for (size_t i = 32; i <= 95; i++) if (encode(i) == binary) return i;
 
   return MORSE_INVALID_CHAR;
 }
@@ -84,39 +84,39 @@ uint16_t Morse::encode(char character) {
 
     case 95: return 0b1101100;    // _
 
-    default: return 0b100000000;   // INVALID
+    default: return 0b100000000;  // INVALID
   }
 }
 
-void Morse::pulse(int8_t e) {
-  if (event) event(&e);
+void Morse::pulse(int8_t sign) {
+  if (event) event(&sign);
 }
 
 String Morse::receipt(String data) {
-  String string, letter;
+  String character = "", string = "";
   for (size_t i = 0; i < data.length(); i++) {
     switch (String(data[i]).toInt()) {
 
       case MORSE_DI:
       case MORSE_DIT:
-        letter = "0" + letter;
+        character = "0" + character;
         break;
 
       case MORSE_DAH:
-        letter = "1" + letter;
+        character = "1" + character;
         break;
 
       case MORSE_GAP:
         break;
 
       case MORSE_CHAR:
-        string += String(decode("1" + letter));
-        letter = "";
+        string += String(decode("1" + character));
+        character = "";
         break;
 
       case MORSE_WORD:
         string += " ";
-        letter = "";
+        character = "";
         break;
 
       case MORSE_PHRASE: return string;
