@@ -1,5 +1,9 @@
 #include "Morse.h"
 
+void Morse::clear() {
+  _buffer = 1;
+}
+
 uint8_t Morse::clear(uint8_t tag) {
   _buffer = 1;
   return tag;
@@ -91,7 +95,11 @@ uint16_t Morse::encode(uint8_t character) {
   }
 }
 
-void Morse::pulse(int8_t signal) {
+void Morse::listen(int16_t signal = -1) {
+  if (_receiver && (signal = tag(signal))) _receiver(char(signal));
+}
+
+void Morse::pulse(uint8_t signal) {
   if (_transmiter) _transmiter(signal);
 }
 
