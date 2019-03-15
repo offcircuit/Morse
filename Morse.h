@@ -29,7 +29,7 @@ class Morse {
 
     uint8_t clear(uint8_t label);
     uint8_t count(uint8_t value);
-    uint8_t decode();
+    uint16_t decode();
     uint16_t encode(uint8_t character);
 
     uint8_t label(uint8_t tag);
