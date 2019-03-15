@@ -24,8 +24,7 @@ class Morse {
 
     uint16_t _buffer = 1;
 
-    morsePointer _transmiter;
-    morsePointer _receiver;
+    morsePointer _receiver, _transmiter;
 
     uint8_t clear(uint8_t label);
     uint8_t count(uint8_t value);

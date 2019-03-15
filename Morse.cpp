@@ -23,15 +23,12 @@ uint8_t Morse::count(uint8_t value) {
 }
 
 uint8_t Morse::decode() {
-  if (encode(13) == _buffer) return 13;
   for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
   return MORSE_INVALID_CHAR;
 }
 
 uint16_t Morse::encode(uint8_t character) {
   switch (character) {
-    case 13: return 0b1101100;    // EOL
-
     case 32: return 0b1;          // SPACE
 
     case 33: return 0b1110101;    // !
