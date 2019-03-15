@@ -1,5 +1,5 @@
 # Morse
-Morse class
+Morse code class for Arduino
 
 # TESTED ON
 
