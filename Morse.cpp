@@ -22,7 +22,7 @@ uint8_t Morse::count(uint8_t value) {
   return count;
 }
 
-uint16_t Morse::decode() {
+uint8_t Morse::decode() {
   if (encode(13) == _buffer) return 13;
   for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
   return MORSE_INVALID_CHAR;
