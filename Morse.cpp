@@ -111,10 +111,9 @@ void Morse::pulse(uint8_t signal) {
 
 String Morse::read(String data) {
   String string = "";
-  uint8_t signal;
-  _buffer = 1;
+  uint8_t signal, buffer = _buffer = 1;
   for (size_t i = 0; i < data.length(); i++) if (signal = tag(String(data[i]).toInt())) string += char(signal);
-  _buffer = 1;
+  _buffer = buffer;
   return string;
 }
 
