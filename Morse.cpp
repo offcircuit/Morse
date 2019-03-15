@@ -10,9 +10,9 @@ void Morse::clear() {
   _buffer = 1;
 }
 
-uint8_t Morse::clear(uint8_t tag) {
+uint8_t Morse::clear(uint8_t label) {
   _buffer = 1;
-  return tag;
+  return label;
 }
 
 uint8_t Morse::count(uint8_t value) {
@@ -101,25 +101,9 @@ uint16_t Morse::encode(uint8_t character) {
   }
 }
 
-void Morse::listen(int16_t signal = -1) {
-  if (_receiver && (signal = tag(signal))) _receiver(char(signal));
-}
-
-void Morse::pulse(uint8_t signal) {
-  if (_transmiter) _transmiter(signal);
-}
-
-String Morse::read(String data) {
-  String string = "";
-  uint8_t signal, buffer = _buffer;
-  for (size_t i = 0; i < data.length(); i++) if (signal = tag(String(data[i]).toInt())) string += char(signal);
-  _buffer = buffer;
-  return string;
-}
-
-uint8_t Morse::tag(uint8_t signal) {
+uint8_t Morse::label(uint8_t tag) {
   if (_buffer > 0xFF) return decode();
-  else switch (signal) {
+  else switch (tag) {
       case MORSE_DI: case MORSE_DIT:
         bitSet(_buffer, count(_buffer));
         bitClear(_buffer, count(_buffer) - 2);
@@ -132,7 +116,19 @@ uint8_t Morse::tag(uint8_t signal) {
       case MORSE_WORD: _buffer = 1; return 32;
       case MORSE_PHRASE: return decode();
     }
-  return 0;
+  return MORSE_NULL;
+}
+
+void Morse::listen(uint8_t tag = MORSE_NULL) {
+  if (_receiver && (tag = label(tag))) _receiver(char(tag));
+}
+
+String Morse::read(String data) {
+  String string = "";
+  uint8_t buffer = _buffer, tag;
+  for (size_t i = 0; i < data.length(); i++) if (tag = label(String(data[i]).toInt())) string += char(tag);
+  _buffer = buffer;
+  return string;
 }
 
 void Morse::receiver(morsePointer pointer) {
@@ -145,19 +141,29 @@ void Morse::transmiter(morsePointer pointer) {
   _transmiter = pointer;
 }
 
+void Morse::tag(char character, size_t position, size_t length) {
+  uint16_t code = encode(character);
+
+  if (code != 1) {
+    do {
+      send(1 + (((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2))));
+      if ((code >> 1) > 1) send(MORSE_GAP);
+    } while ((code = code >> 1) > 1);
+
+    if (position < character - 1) send(MORSE_CHAR);
+  } else if (position < length) send(MORSE_WORD);
+}
+
+void Morse::send(uint8_t tag) {
+  if (_transmiter) _transmiter(tag);
+}
+
 void Morse::write(String data) {
   data.toUpperCase();
-  for (size_t i = 0; i < data.length(); i++) {
-    uint16_t code = encode(data[i]);
+  for (size_t i = 0; i < data.length(); i++) tag(data[i], i, data.length());
+}
 
-    if (code != 1) {
-      do {
-        pulse(((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2)));
-        if ((code >> 1) > 1) pulse(MORSE_GAP);
-      } while ((code = code >> 1) > 1);
-
-      if (i < data.length() - 1) pulse(MORSE_CHAR);
-    } else if (i < data.length()) pulse(MORSE_WORD);
-  }
-  pulse(MORSE_PHRASE);
+void Morse::writeln(String data) {
+  write(data);
+  send(MORSE_PHRASE);
 }

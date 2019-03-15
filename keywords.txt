@@ -19,11 +19,13 @@ read	KEYWORD2
 receiver	KEYWORD2
 transmiter	KEYWORD2
 write	KEYWORD2
+writeln	KEYWORD2
 
 ##################################################
 # Constants				(LITERAL1)
 ##################################################
 
+MORSE_NULL	LITERAL1
 MORSE_DI	LITERAL1
 MORSE_DAH	LITERAL1
 MORSE_DIT	LITERAL1
