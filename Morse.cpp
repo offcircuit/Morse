@@ -22,12 +22,6 @@ uint8_t Morse::count(uint8_t value) {
   return count;
 }
 
-uint8_t Morse::decode() {
-  if (encode(13) == _buffer) return clear(13);
-  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return clear(i);
-  return clear(MORSE_INVALID_CHAR);
-}
-
 uint16_t Morse::encode(uint8_t character) {
   switch (character) {
     case 13: return 0b1101100;    // EOL
@@ -101,21 +95,27 @@ uint16_t Morse::encode(uint8_t character) {
   }
 }
 
+uint8_t Morse::decode() {
+  if (encode(13) == _buffer) return 13;
+  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
+  return MORSE_INVALID_CHAR;
+}
+
 uint8_t Morse::label(uint8_t tag) {
-  if (_buffer > 0xFF) return decode();
-  else switch (tag) {
-      case MORSE_DI: case MORSE_DIT:
-        bitSet(_buffer, count(_buffer));
-        bitClear(_buffer, count(_buffer) - 2);
-        break;
-      case MORSE_DAH:
-        bitSet(_buffer, count(_buffer));
-        break;
-      case MORSE_GAP: break;
-      case MORSE_CHAR: return decode();
-      case MORSE_WORD: return clear(32);
-      case MORSE_PHRASE: return decode();
-    }
+  switch (tag) {
+    case MORSE_DI: case MORSE_DIT:
+      bitSet(_buffer, count(_buffer));
+      bitClear(_buffer, count(_buffer) - 2);
+      break;
+    case MORSE_DAH:
+      bitSet(_buffer, count(_buffer));
+      break;
+    case MORSE_GAP: if (_buffer > 0xFF) return clear(decode());
+    case MORSE_CHAR: return clear(decode());
+    case MORSE_WORD: return clear(32);
+    case MORSE_PHRASE: return clear(decode());
+  }
+
   return MORSE_NULL;
 }
 
@@ -147,7 +147,7 @@ void Morse::transmiter(morsePointer pointer) {
 
 void Morse::write(String data) {
   data.toUpperCase();
-  
+
   for (size_t i = 0; i < data.length(); i++) {
     uint16_t code = encode(data[i]);
 
