@@ -1,5 +1,5 @@
 #ifndef MORSE_H
-#define MORSE
+#define MORSE_H
 
 #if ARDUINO >= 100
 #include "Arduino.h"
@@ -7,7 +7,7 @@
 #include "WProgram.h"
 #endif
 
-#define MORSE_NULL 0    // SHORT MARK
+#define MORSE_NULL 0    // NULL
 #define MORSE_DI 1      // SHORT MARK
 #define MORSE_DAH 2     // LONG MARK
 #define MORSE_DIT 3     // SHORT ENDING MARK

@@ -18,7 +18,7 @@ uint8_t Morse::clear(uint8_t label) {
 uint8_t Morse::count(uint8_t value) {
   int count = 0;
   do count++;
-  while ((value = value >> 1));
+  while (value = value >> 1);
   return count;
 }
 
@@ -113,7 +113,7 @@ uint8_t Morse::label(uint8_t tag) {
         break;
       case MORSE_GAP: break;
       case MORSE_CHAR: return decode();
-      case MORSE_WORD: _buffer = 1; return 32;
+      case MORSE_WORD: return clear(32);
       case MORSE_PHRASE: return decode();
     }
   return MORSE_NULL;
@@ -136,11 +136,6 @@ void Morse::receiver(morsePointer pointer) {
   _receiver = pointer;
 }
 
-void Morse::transmiter(morsePointer pointer) {
-  _buffer = 1;
-  _transmiter = pointer;
-}
-
 void Morse::tag(char character, size_t position, size_t length) {
   uint16_t code = encode(character);
 
@@ -156,6 +151,11 @@ void Morse::tag(char character, size_t position, size_t length) {
 
 void Morse::send(uint8_t tag) {
   if (_transmiter) _transmiter(tag);
+}
+
+void Morse::transmiter(morsePointer pointer) {
+  _buffer = 1;
+  _transmiter = pointer;
 }
 
 void Morse::write(String data) {
