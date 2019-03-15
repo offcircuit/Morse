@@ -1,5 +1,11 @@
 #include "Morse.h"
 
+void Morse::begin(morsePointer tx, morsePointer rx) {
+  _buffer = 1;
+  _receiver = rx;
+  _transmiter = tx;
+}
+
 void Morse::clear() {
   _buffer = 1;
 }
@@ -113,7 +119,6 @@ String Morse::read(String data) {
 }
 
 uint8_t Morse::tag(uint8_t signal) {
-
   if (_buffer > 0xFF) return decode();
   else switch (signal) {
       case MORSE_DI: case MORSE_DIT:
@@ -128,8 +133,17 @@ uint8_t Morse::tag(uint8_t signal) {
       case MORSE_WORD: _buffer = 1; return 32;
       case MORSE_PHRASE: return decode();
     }
-
   return 0;
+}
+
+void Morse::receiver(morsePointer pointer) {
+  _buffer = 1;
+  _receiver = pointer;
+}
+
+void Morse::transmiter(morsePointer pointer) {
+  _buffer = 1;
+  _transmiter = pointer;
 }
 
 void Morse::write(String data) {

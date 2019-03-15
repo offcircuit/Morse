@@ -12,9 +12,12 @@ Morse	KEYWORD1
 # Methods and Functions			(KEYWORD2)
 ##################################################
 		
+begin	KEYWORD2
 clear	KEYWORD2
 listen	KEYWORD2
 read	KEYWORD2
+receiver	KEYWORD2
+transmiter	KEYWORD2
 write	KEYWORD2
 
 ##################################################
@@ -32,7 +35,4 @@ MORSE_PHRASE	LITERAL1
 ##################################################
 # Built-in variables			(LITERAL2)
 ##################################################
-
-receiver	LITERAL2
-transmiter	LITERAL2
 

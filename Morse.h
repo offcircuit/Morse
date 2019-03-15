@@ -19,13 +19,12 @@
 
 class Morse {
   private:
-    typedef void (*morseTransmiter) (uint8_t *);
-    typedef void (*morseReceiver) (uint8_t *);
+    typedef void (*morsePointer) (uint8_t *);
 
     uint16_t _buffer = 1;
 
-    morseTransmiter _transmiter;
-    morseReceiver _receiver;
+    morsePointer _transmiter;
+    morsePointer _receiver;
 
     uint8_t clear(uint8_t tag);
     uint8_t count(uint8_t value);
@@ -36,11 +35,14 @@ class Morse {
     uint8_t tag(uint8_t signal);
   public:
 
-    explicit Morse(morseTransmiter tx, morseReceiver rx): _transmiter(tx), _receiver(rx) {};
+    explicit Morse() {};
 
+    void begin(morsePointer tx, morsePointer rx);
     void clear();
     void listen(int16_t signal = -1);
     String read(String data);
+    void receiver(morsePointer pointer);
+    void transmiter(morsePointer pointer);
     void write(String data);
 };
 
