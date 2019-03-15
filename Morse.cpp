@@ -136,19 +136,6 @@ void Morse::receiver(morsePointer pointer) {
   _receiver = pointer;
 }
 
-void Morse::tag(char character, size_t position, size_t length) {
-  uint16_t code = encode(character);
-
-  if (code != 1) {
-    do {
-      send(1 + (((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2))));
-      if ((code >> 1) > 1) send(MORSE_GAP);
-    } while ((code = code >> 1) > 1);
-
-    if (position < character - 1) send(MORSE_CHAR);
-  } else if (position < length) send(MORSE_WORD);
-}
-
 void Morse::send(uint8_t tag) {
   if (_transmiter) _transmiter(tag);
 }
@@ -160,7 +147,19 @@ void Morse::transmiter(morsePointer pointer) {
 
 void Morse::write(String data) {
   data.toUpperCase();
-  for (size_t i = 0; i < data.length(); i++) tag(data[i], i, data.length());
+  
+  for (size_t i = 0; i < data.length(); i++) {
+    uint16_t code = encode(data[i]);
+
+    if (code != 1) {
+      do {
+        send(1 + (((code % 2) + (((code >> 1) < 2) * (1 - (code % 2)) * 2))));
+        if ((code >> 1) > 1) send(MORSE_GAP);
+      } while ((code = code >> 1) > 1);
+
+      if (i < data.length() - 1) send(MORSE_CHAR);
+    } else if (i < data.length()) send(MORSE_WORD);
+  }
 }
 
 void Morse::writeln(String data) {

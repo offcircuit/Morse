@@ -33,7 +33,6 @@ class Morse {
     uint16_t encode(uint8_t character);
 
     uint8_t label(uint8_t tag);
-    void tag(char character, size_t position, size_t length);
     void send(uint8_t tag);
 
   public:
