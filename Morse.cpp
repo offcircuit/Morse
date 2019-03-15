@@ -22,6 +22,12 @@ uint8_t Morse::count(uint8_t value) {
   return count;
 }
 
+uint8_t Morse::decode() {
+  if (encode(13) == _buffer) return 13;
+  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
+  return MORSE_INVALID_CHAR;
+}
+
 uint16_t Morse::encode(uint8_t character) {
   switch (character) {
     case 13: return 0b1101100;    // EOL
@@ -95,12 +101,6 @@ uint16_t Morse::encode(uint8_t character) {
   }
 }
 
-uint8_t Morse::decode() {
-  if (encode(13) == _buffer) return 13;
-  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
-  return MORSE_INVALID_CHAR;
-}
-
 uint8_t Morse::label(uint8_t tag) {
   switch (tag) {
     case MORSE_DI: case MORSE_DIT:
@@ -110,11 +110,13 @@ uint8_t Morse::label(uint8_t tag) {
     case MORSE_DAH:
       bitSet(_buffer, count(_buffer));
       break;
-    case MORSE_GAP: if (_buffer > 0xFF) return clear(decode());
+    case MORSE_GAP: if (_buffer > 0xFF) return clear(decode()); break;
     case MORSE_CHAR: return clear(decode());
     case MORSE_WORD: return clear(32);
     case MORSE_PHRASE: return clear(decode());
   }
+
+  
 
   return MORSE_NULL;
 }
