@@ -5,50 +5,58 @@ Morse morse;
 String s;
 
 void receiver(char e) {
+  // receiving a message (letter by letter)
+
   Serial.print(e);
   delay(50);
 }
 
-void transmiter(int8_t e) {
+void transmiter(uint8_t e) {
+  // transmitting a message (tag by tag)
+
   s += String(e);
 
-  if (e == MORSE_GAP) Serial.print(" GAP ");
-  if (e == MORSE_CHAR) Serial.println(" CHAR ");
-  else if (e == MORSE_WORD) Serial.println(" WORD ");
-  else if (e == MORSE_PHRASE) Serial.println(" PHRASE ");
+  if (e == MORSE_GAP) Serial.print("");
+  if (e == MORSE_CHAR) Serial.print("/");
+  else if (e == MORSE_SPACE) Serial.print("   ");
+  else if (e == MORSE_EOL) Serial.println(" EOL ");
   else {
-    if (e == MORSE_DI) Serial.print(" DI ");
-    else if (e == MORSE_DIT) Serial.print(" DIT ");
-    else if (e == MORSE_DAH) Serial.print(" DAH ");
+    if (e == MORSE_DI) Serial.print(".");
+    else if (e == MORSE_DIT) Serial.print(".");
+    else if (e == MORSE_DAH) Serial.print("-");
     else {
-      Serial.print(" ");
+      Serial.print("");
     }
   }
 }
 
 void setup() {
   // put your setup code here, to run once:
+  
   Serial.begin(9600);
   morse.begin(transmiter, receiver);
-  
-  Serial.println("-- WRITE MESSAGE --");
+
+  Serial.println("-- WRITE MESSAGE WITHOUT EOL --");
   morse.write("sending ");
-  morse.writeln("morse code...");
+
+  Serial.println("-- WRITE MESSAGE WITH EOL --");
+  morse.writeln("morse code...<");
+  
   Serial.println("");
 
-  Serial.println("-- MESSAGE RECEIVED --");
+  Serial.println("-- MESSAGE RECEIVED (ENCODED)--");
   Serial.println(s);
   Serial.println("");
-  
-  Serial.println("-- READ RECEIVED --");
+
+  Serial.println("-- READ RECEIVED MESSAGE --");
   Serial.println(morse.read(s));
   Serial.println("");
-  
-  Serial.println("-- READ RECEIVED STEP BY STEP --");
+
+  Serial.println("-- READ RECEIVED TAG BY TAG --");
   for (int i = 0; i < s.length(); i++) morse.listen(String(s[i]).toInt());
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  // put your main code here, to run repeatedly:
 }
