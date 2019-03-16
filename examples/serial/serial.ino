@@ -20,9 +20,9 @@ void transmiter(uint8_t e) {
   else if (e == MORSE_SPACE) Serial.print("   ");
   else if (e == MORSE_EOL) Serial.println(" EOL ");
   else {
-    if (e == MORSE_DI) Serial.print(".");
-    else if (e == MORSE_DIT) Serial.print(".");
-    else if (e == MORSE_DAH) Serial.print("-");
+    if (e == MORSE_DI) Serial.print("_");
+    else if (e == MORSE_DIT) Serial.print("-");
+    else if (e == MORSE_DAH) Serial.print("¯");
     else {
       Serial.print("");
     }
@@ -33,7 +33,7 @@ void setup() {
   // put your setup code here, to run once:
 
   Serial.begin(9600);
-  morse.begin(transmiter, receiver);
+  morse.begin(receiver, transmiter);
 
   Serial.println("-- PRINT MESSAGE WITHOUT EOL --");
   morse.print("se<n");
@@ -59,6 +59,5 @@ void setup() {
 }
 
 void loop() {
-
   // put your main code here, to run repeatedly:
 }
