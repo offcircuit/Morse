@@ -18,8 +18,8 @@ listen	KEYWORD2
 read	KEYWORD2
 receiver	KEYWORD2
 transmiter	KEYWORD2
-write	KEYWORD2
-writeln	KEYWORD2
+print	KEYWORD2
+println	KEYWORD2
 
 ##################################################
 # Constants				(LITERAL1)
