@@ -15,7 +15,7 @@ uint8_t Morse::clear(uint8_t label) {
   return label;
 }
 
-uint8_t Morse::count(uint8_t value) {
+uint8_t Morse::count(uint16_t value) {
   int count = 0;
   do count++;
   while (value = value >> 1);
@@ -23,7 +23,7 @@ uint8_t Morse::count(uint8_t value) {
 }
 
 uint8_t Morse::decode() {
-  for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
+  if (_buffer < 0x100) for (size_t i = 32; i <= 95; i++) if (encode(i) == _buffer) return i;
   return MORSE_INVALID_CHAR;
 }
 
@@ -107,13 +107,13 @@ uint8_t Morse::label(uint8_t tag) {
     case MORSE_DAH:
       bitSet(_buffer, count(_buffer));
       break;
-    case MORSE_GAP: break;
+    case MORSE_GAP: return MORSE_NULL;
     case MORSE_CHAR: return clear(decode());
     case MORSE_SPACE: return clear(32);
     case MORSE_EOL: return clear(decode());
   }
 
-  if (_buffer > 0b110000000) return clear(MORSE_INVALID_CHAR);
+  if (_buffer > 0x100) return clear(MORSE_INVALID_CHAR);
 
   return MORSE_NULL;
 }
@@ -144,7 +144,7 @@ void Morse::transmiter(morsePointer pointer) {
   _transmiter = pointer;
 }
 
-void Morse::write(String data) {
+void Morse::compose(String data, bool eol = false) {
   data.toUpperCase();
 
   for (size_t i = 0; i < data.length(); i++) {
@@ -156,12 +156,16 @@ void Morse::write(String data) {
         if ((code >> 1) > 1) send(MORSE_GAP);
       } while ((code = code >> 1) > 1);
 
-      if (i < data.length() - 1) send(MORSE_CHAR);
+      if (i < (data.length() - eol)) send(MORSE_CHAR);
     } else if (i < data.length()) send(MORSE_SPACE);
   }
+  if (eol) send(MORSE_EOL);
+}
+
+void Morse::write(String data) {
+  compose(data);
 }
 
 void Morse::writeln(String data) {
-  write(data);
-  send(MORSE_EOL);
+  compose(data, true);
 }

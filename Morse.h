@@ -27,10 +27,11 @@ class Morse {
     morsePointer _receiver, _transmiter;
 
     uint8_t clear(uint8_t label);
-    uint8_t count(uint8_t value);
+    uint8_t count(uint16_t value);
     uint8_t decode();
     uint16_t encode(uint8_t character);
 
+    void compose(String data, bool eol = false);
     uint8_t label(uint8_t tag);
     void send(uint8_t tag);
 
