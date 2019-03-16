@@ -9,8 +9,8 @@
 
 #define MORSE_NULL 0    // NULL
 #define MORSE_DI 1      // SHORT MARK
-#define MORSE_DAH 2     // LONG MARK
-#define MORSE_DIT 3     // SHORT ENDING MARK
+#define MORSE_DIT 2     // SHORT ENDING MARK
+#define MORSE_DAH 3     // LONG MARK
 #define MORSE_GAP 4     // BETWEEN CHARACTERS
 #define MORSE_CHAR 5    // BETWEEN LETTERS
 #define MORSE_SPACE 6   // BETWEEN WORDS
