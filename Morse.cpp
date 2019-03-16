@@ -23,7 +23,7 @@ void Morse::compose(String data, bool eol = false) {
 
     if (code != 1) {
       do {
-        send(2 + ((code % 2) - (((code = (code >> 1)) < 2) * (1 - (code % 2)))));
+        send(2 + ((code % 2)  - (((code + 1) % 2) * ((code = (code >> 1)) < 2))));
         if (code > 1) send(MORSE_GAP);
       } while (code > 1);
 
