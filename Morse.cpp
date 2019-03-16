@@ -109,8 +109,8 @@ uint8_t Morse::label(uint8_t tag) {
       break;
     case MORSE_GAP: break;
     case MORSE_CHAR: return clear(decode());
-    case MORSE_WORD: return clear(32);
-    case MORSE_PHRASE: return clear(decode());
+    case MORSE_SPACE: return clear(32);
+    case MORSE_EOL: return clear(decode());
   }
 
   if (_buffer > 0b110000000) return clear(MORSE_INVALID_CHAR);
@@ -157,11 +157,11 @@ void Morse::write(String data) {
       } while ((code = code >> 1) > 1);
 
       if (i < data.length() - 1) send(MORSE_CHAR);
-    } else if (i < data.length()) send(MORSE_WORD);
+    } else if (i < data.length()) send(MORSE_SPACE);
   }
 }
 
 void Morse::writeln(String data) {
   write(data);
-  send(MORSE_PHRASE);
+  send(MORSE_EOL);
 }
