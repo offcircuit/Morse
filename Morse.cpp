@@ -1,6 +1,6 @@
 #include "Morse.h"
 
-void Morse::begin(morsePointer tx, morsePointer rx) {
+void Morse::begin(morsePointer rx, morsePointer tx) {
   _buffer = 1;
   _receiver = rx;
   _transmiter = tx;
@@ -23,7 +23,7 @@ void Morse::compose(String data, bool eol = false) {
 
     if (code != 1) {
       do {
-        send(2 + ((code % 2)  - (((code + 1) % 2) * ((code = (code >> 1)) < 2))));
+        send(2 + ((code % 2) - (((code + 1) % 2) * ((code = (code >> 1)) < 2))));
         if (code > 1) send(MORSE_GAP);
       } while (code > 1);
 

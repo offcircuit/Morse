@@ -38,7 +38,7 @@ class Morse {
   public:
     explicit Morse() {};
 
-    void begin(morsePointer tx, morsePointer rx);
+    void begin(morsePointer rx, morsePointer tx);
     void clear();
     void listen(uint8_t tag = MORSE_NULL);
     void print(String data);
