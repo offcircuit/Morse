@@ -15,11 +15,11 @@ Morse	KEYWORD1
 begin	KEYWORD2
 clear	KEYWORD2
 listen	KEYWORD2
+print	KEYWORD2
+println	KEYWORD2
 read	KEYWORD2
 receiver	KEYWORD2
 transmiter	KEYWORD2
-print	KEYWORD2
-println	KEYWORD2
 
 ##################################################
 # Constants				(LITERAL1)
