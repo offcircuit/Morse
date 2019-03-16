@@ -41,11 +41,11 @@ class Morse {
     void begin(morsePointer tx, morsePointer rx);
     void clear();
     void listen(uint8_t tag = MORSE_NULL);
+    void print(String data);
+    void println(String data);
     String read(String data);
     void receiver(morsePointer pointer);
     void transmiter(morsePointer pointer);
-    void write(String data);
-    void writeln(String data);
 };
 
 #endif

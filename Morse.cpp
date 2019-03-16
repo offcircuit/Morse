@@ -140,6 +140,14 @@ void Morse::listen(uint8_t tag = MORSE_NULL) {
   if (_receiver && (tag = label(tag))) _receiver(char(tag));
 }
 
+void Morse::print(String data) {
+  compose(data);
+}
+
+void Morse::println(String data) {
+  compose(data, true);
+}
+
 String Morse::read(String data) {
   String string = "";
   uint8_t buffer = _buffer, tag;
@@ -160,12 +168,4 @@ void Morse::send(uint8_t tag) {
 void Morse::transmiter(morsePointer pointer) {
   _buffer = 1;
   _transmiter = pointer;
-}
-
-void Morse::write(String data) {
-  compose(data);
-}
-
-void Morse::writeln(String data) {
-  compose(data, true);
 }
