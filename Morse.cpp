@@ -20,12 +20,14 @@ void Morse::compose(String data, bool eol = false) {
 
   for (size_t i = 0; i < data.length(); i++) {
     uint16_t code = encode(data[i]);
-
+ 
     if (code != 1) {
-      do {
-        send(2 + ((code % 2) - (((code + 1) % 2) * ((code = (code >> 1)) < 2))));
-        if (code > 1) send(MORSE_GAP);
-      } while (code > 1);
+    uint8_t n = 0;
+     
+     do {
+        send(2 + bitRead(code, n) - !(bitRead(code, n++) | (code >> (n + 1)))); // SEND SIGNAL, STARTING FROM VALUE 2 AND DECRESE 1 IF IS 0 AND LAST
+        if (code >> (n + 1)) send(MORSE_GAP);
+      } while (code >> (n + 1));
 
       if (i < (data.length() - eol)) send(MORSE_CHAR);
     } else if (i < data.length()) send(MORSE_SPACE);
@@ -34,7 +36,7 @@ void Morse::compose(String data, bool eol = false) {
 }
 
 uint8_t Morse::count(uint16_t value) {
-  int count = 0;
+  uint8_t count = 0;
   do count++;
   while (value = value >> 1);
   return count;
@@ -119,11 +121,11 @@ uint16_t Morse::encode(uint8_t character) {
 uint8_t Morse::label(uint8_t tag) {
   switch (tag) {
     case MORSE_DI: case MORSE_DIT:
-      bitSet(_buffer, count(_buffer));
-      bitClear(_buffer, count(_buffer) - 2);
+      bitSet(_buffer, count(_buffer)); // ADD A BIT TO THE LEFT - INDEX 0
+      bitClear(_buffer, count(_buffer) - 2); // CLEAR THE SECOND FROM LEFT BIT - INDEX 1
       break;
     case MORSE_DAH:
-      bitSet(_buffer, count(_buffer));
+      bitSet(_buffer, count(_buffer)); // ADD A BIT TO THE LEFT - INDEX 0
       break;
     case MORSE_GAP: return MORSE_NULL;
     case MORSE_CHAR: return clear(decode());
