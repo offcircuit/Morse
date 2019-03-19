@@ -25,7 +25,7 @@ void Morse::compose(String data, bool eol = false) {
     uint8_t n = 0;
      
      do {
-        send(2 + bitRead(code, n) - !(bitRead(code, n++) | (code >> (n + 1)))); // SEND SIGNAL, STARTING FROM VALUE 2 AND DECRESE 1 IF IS 0 AND LAST
+        send(2 + bitRead(code, n) - !(bitRead(code, n++) | (code >> (n + 1)))); // SEND SIGNAL, STARTING FROM VALUE 2 AND DECREASE 1 IF IS 0 AND LAST
         if (code >> (n + 1)) send(MORSE_GAP);
       } while (code >> (n + 1));
 
